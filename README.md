@@ -1,7 +1,3 @@
-<p align="center">
-  <img src="images/arch.png" width="96%" alt="COAST framework overview">
-</p>
-
 <h1 align="center">COAST</h1>
 
 <p align="center"><b>C</b>ontrastive <b>A</b>daptive <b>S</b>emantic <b>T</b>oken Pruning</p>
@@ -23,6 +19,7 @@ Vision-language models process hundreds of visual tokens for a single image. A c
 
 **COAST** is a training-free, inference-time token pruning framework for vision-language models. It combines query-aware anchor selection, entropy-driven budget allocation, and anchor-reference contrastive routing. The implementation in this repository integrates COAST into the LLaVA Llama backbone without changing the model weights.
 
+
 ## Framework
 
 The framework operates progressively across decoder layers. At each pruning stage, COAST uses the native cross-modal attention already produced by the model:
@@ -35,11 +32,7 @@ The framework operates progressively across decoder layers. At each pruning stag
 <p align="center">
   <img src="images/arch.png" width="98%" alt="COAST architecture: multi-granularity attention, entropy-driven dynamic budgeting, and contrastive semantic routing">
 </p>
-<p align="center"><i>COAST framework overview. The original vector figure is available at <a href="images/arch.pdf">images/arch.pdf</a>.</i></p>
 
-## Main results
-
-The paper reports that COAST reduces visual tokens by **77.8%**, achieves a **2.15x latency speedup**, and retains **98.64%** of the original average performance across seven vision-language benchmarks. COAST is training-free and transfers across token budgets, backbones, and LVLM families.
 
 ## Repository structure
 
@@ -50,8 +43,6 @@ COAST_LLaVA/
 │       ├── coast_llama.py       # COAST progressive pruning implementation
 │       └── llava_llama.py       # LLaVA Llama model integration
 ├── eval_scripts/                # Evaluation examples
-├── images/arch.pdf              # Original framework figure
-├── images/arch.png              # README-rendered framework figure
 ├── pyproject.toml               # Package and dependency configuration
 └── README.md
 ```
@@ -63,29 +54,13 @@ The code follows the LLaVA 1.5 environment and is tested with Python 3.10, PyTor
 ```bash
 git clone https://github.com/Liuuuuuyh/COAST.git
 cd COAST
-conda create -n coast-llava python=3.10 -y
-conda activate coast-llava
+conda create -n coast python=3.10 -y
+conda activate coast
 # Install a PyTorch build that matches your CUDA version, if needed.
 pip install --upgrade pip
 pip install -e .
 ```
 
-Download a LLaVA-compatible checkpoint separately. Checkpoints and benchmark datasets are intentionally not included in this repository.
-
-## Quickstart
-
-Run single-image inference with a LLaVA 1.5 checkpoint:
-
-```bash
-python -m llava.eval.run_llava \
-  --model-path /path/to/llava-v1.5-7b \
-  --image-file /path/to/image.jpg \
-  --query "Describe the image." \
-  --conv-mode llava_v1 \
-  --temperature 0
-```
-
-The model integration imports `COASTLlamaModel` from `llava/model/language_model/coast_llama.py`, so the configured COAST pruning stages are applied during generation. The default LLaVA-1.5 336px configuration uses image-token span `[35, 611)` and keeps 214, 78, 6, and 4 image tokens after decoder layers 2, 12, 22, and 28. These positions must be revisited when changing the vision encoder, image resolution, prompt layout, or multimodal token insertion.
 
 ## Evaluation
 
@@ -93,6 +68,7 @@ The repository includes evaluation examples under `eval_scripts/`. After install
 
 ```bash
 CUDA_VISIBLE_DEVICES=0 python -m lmms_eval \
+  --num_processes 1 \
   --model llava \
   --model_args pretrained=/path/to/llava-v1.5-7b \
   --tasks mme \
@@ -113,7 +89,7 @@ CUDA_VISIBLE_DEVICES=0,1,2,3 python -m accelerate.commands.launch \
   --output_path ./logs/coast/multigpu
 ```
 
-Benchmark names and dataset preparation follow the installed `lmms-eval` version. Do not place access tokens in shell scripts; configure Hugging Face authentication through the standard environment or CLI login flow.
+Benchmark names and dataset preparation follow the installed `lmms-eval` version.
 
 ## Citation
 
@@ -130,16 +106,6 @@ If you find COAST useful, please cite our paper and the LLaVA foundation model:
 }
 ```
 
-```bibtex
-@article{liu2023llava,
-  title   = {Visual Instruction Tuning},
-  author  = {Liu, Haotian and Li, Chunyuan and Wu, Qingyang and Lee, Yong Jae},
-  journal = {Advances in Neural Information Processing Systems},
-  year    = {2023},
-  url     = {https://arxiv.org/abs/2304.08485}
-}
-```
-
 ## Acknowledgements
 
-This project builds on [LLaVA](https://github.com/haotian-liu/LLaVA). We thank the LLaVA authors and the open-source vision-language community. The repository is released under the Apache License 2.0; see [LICENSE](LICENSE) for details.
+This project builds on [LLaVA](https://github.com/haotian-liu/LLaVA), [FastV](https://github.com/pkunlp-icler/FastV). We thank the authors and the open-source vision-language community. The repository is released under the Apache License 2.0; see [LICENSE](LICENSE) for details.
