@@ -1,6 +1,6 @@
 <h1 align="center">COAST</h1>
 
-<p align="center"><b>C</b>ontrastive <b>A</b>daptive <b>S</b>emantic <b>T</b>oken Pruning</p>
+<p align="center"><b>C</b><b>O</b>ntrastive <b>A</b>daptive <b>S</b>emantic <b>T</b>oken Pruning</p>
 
 <p align="center"><b>Evading Visual Aphasia: Contrastive Adaptive Semantic Token Pruning for Vision-Language Models</b></p>
 
