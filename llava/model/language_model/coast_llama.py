@@ -26,10 +26,6 @@ _captured_attention = None
 
 @contextmanager
 def capture_sdpa_attention():
-    """
-    通过劫持底层 F.scaled_dot_product_attention，
-    在不触发 HF Eager Fallback 的前提下，捞出 Q 和 K 并计算 Attention Weights。
-    """
     global _captured_attention
     _captured_attention = None
     original_sdpa = F.scaled_dot_product_attention
@@ -52,11 +48,9 @@ def capture_sdpa_attention():
         return original_sdpa(query, key, value, attn_mask, dropout_p, is_causal, **kwargs)
 
     try:
-        # 替换底层的 sdpa
         F.scaled_dot_product_attention = hooked_sdpa
         yield
     finally:
-        # 退出上下文时，务必恢复原函数
         F.scaled_dot_product_attention = original_sdpa
 
 

@@ -28,18 +28,9 @@ from transformers.generation.utils import GenerateOutput
 from ..llava_arch import LlavaMetaModel, LlavaMetaForCausalLM
 
 from .coast_llama import COASTLlamaModel
-from .fastv_kvcache_final_copy import FastVLlamaModel
-
 
 class LlavaConfig(LlamaConfig):
     model_type = "llava_llama"
-
-
-# class LlavaLlamaModel(LlavaMetaModel, LlamaModel):
-#     config_class = LlavaConfig
-
-#     def __init__(self, config: LlamaConfig):
-#         super(LlavaLlamaModel, self).__init__(config)
 
 
 class LlavaLlamaModel(LlavaMetaModel, COASTLlamaModel): # Alter LlamaModel to  COASTLlamaModel
